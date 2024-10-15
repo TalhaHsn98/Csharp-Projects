@@ -1,178 +1,180 @@
-﻿/*internal class Program
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+namespace LibraryManagementSystem
 {
-    private static void Main(string[] args)
+    // Model class representing a Book
+    public class Book
     {
-        Console.WriteLine("Hello, I am the best Programmer from now on");
-    }
-}
-*/
+        public string Title { get; private set; }
+        public string Author { get; private set; }
+        public int Year { get; private set; }
+        public string ISBN { get; private set; }
+        public bool IsBorrowed { get; set; }
 
-
-namespace BankManagementSystem
-{
-    class BankAccount
-    {
-        public int AccountNumber { get; private set; }
-        public string AccountHolderName { get; private set; }
-        public decimal Balance { get; private set; }
-
-        public BankAccount(int accountNumber, string accountHolderName, decimal initialBalance)
+        public Book(string title, string author, int year, string isbn)
         {
-            AccountNumber = accountNumber;
-            AccountHolderName = accountHolderName;
-            Balance = initialBalance;
-        }
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("Book title cannot be empty.");
+            if (string.IsNullOrWhiteSpace(author))
+                throw new ArgumentException("Book author cannot be empty.");
+            if (year < 1000 || year > DateTime.Now.Year)
+                throw new ArgumentException("Invalid publication year.");
+            if (string.IsNullOrWhiteSpace(isbn) || isbn.Length != 13)
+                throw new ArgumentException("ISBN must be exactly 13 characters long.");
 
-        public void Deposit(decimal amount)
-        {
-            if (amount <= 0)
-            {
-                Console.WriteLine("Deposit amount must be positive.");
-                return;
-            }
-
-            Balance += amount;
-            Console.WriteLine($"Deposited {amount:C} to account {AccountNumber}. New balance: {Balance:C}");
-        }
-
-        public void Withdraw(decimal amount)
-        {
-            if (amount <= 0)
-            {
-                Console.WriteLine("Withdrawal amount must be positive.");
-                return;
-            }
-
-            if (amount > Balance)
-            {
-                Console.WriteLine("Insufficient balance.");
-                return;
-            }
-
-            Balance -= amount;
-            Console.WriteLine($"Withdrew {amount:C} from account {AccountNumber}. New balance: {Balance:C}");
-        }
-
-        public void DisplayAccountInfo()
-        {
-            Console.WriteLine($"\nAccount Number: {AccountNumber}\nAccount Holder: {AccountHolderName}\nBalance: {Balance:C}\n");
+            Title = title;
+            Author = author;
+            Year = year;
+            ISBN = isbn;
+            IsBorrowed = false;
         }
     }
 
-    class Bank
+    // Model class representing a User
+    public class User
     {
-        private List<BankAccount> accounts = new List<BankAccount>();
-        private int nextAccountNumber = 1001;
+        public string Name { get; private set; }
+        public string Email { get; private set; }
 
-        public void CreateAccount(string accountHolderName, decimal initialBalance)
+        public User(string name, string email)
         {
-            BankAccount newAccount = new BankAccount(nextAccountNumber++, accountHolderName, initialBalance);
-            accounts.Add(newAccount);
-            Console.WriteLine($"Account created successfully! Account Number: {newAccount.AccountNumber}");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("User name cannot be empty.");
+            if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+                throw new ArgumentException("Invalid email address.");
+
+            Name = name;
+            Email = email;
         }
 
-        public void DepositToAccount(int accountNumber, decimal amount)
+        private bool IsValidEmail(string email)
         {
-            BankAccount account = FindAccount(accountNumber);
-            if (account != null)
-            {
-                account.Deposit(amount);
-            }
-        }
-
-        public void WithdrawFromAccount(int accountNumber, decimal amount)
-        {
-            BankAccount account = FindAccount(accountNumber);
-            if (account != null)
-            {
-                account.Withdraw(amount);
-            }
-        }
-
-        public void DisplayAccountDetails(int accountNumber)
-        {
-            BankAccount account = FindAccount(accountNumber);
-            if (account != null)
-            {
-                account.DisplayAccountInfo();
-            }
-        }
-
-        private BankAccount FindAccount(int accountNumber)
-        {
-            foreach (var account in accounts)
-            {
-                if (account.AccountNumber == accountNumber)
-                {
-                    return account;
-                }
-            }
-
-            Console.WriteLine($"Account {accountNumber} not found.");
-            return null;
+            var emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, emailPattern);
         }
     }
 
+    // Service class for Library Management
+    public class LibraryService
+    {
+        private readonly LibraryRepository _libraryRepository;
+
+        public LibraryService()
+        {
+            _libraryRepository = new LibraryRepository();
+        }
+
+        // Register a user
+        public void RegisterUser(string name, string email)
+        {
+            try
+            {
+                var user = new User(name, email);
+                _libraryRepository.AddUser(user);
+                Console.WriteLine($"User {name} registered successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        // Add a book to the library
+        public void AddBook(string title, string author, int year, string isbn)
+        {
+            try
+            {
+                var book = new Book(title, author, year, isbn);
+                _libraryRepository.AddBook(book);
+                Console.WriteLine($"Book '{title}' added successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        // Borrow a book
+        public void BorrowBook(string userEmail, string isbn)
+        {
+            var user = _libraryRepository.GetUserByEmail(userEmail);
+            if (user == null)
+            {
+                Console.WriteLine("Error: User not found.");
+                return;
+            }
+
+            var book = _libraryRepository.GetBookByISBN(isbn);
+            if (book == null)
+            {
+                Console.WriteLine("Error: Book not found.");
+                return;
+            }
+
+            if (book.IsBorrowed)
+            {
+                Console.WriteLine("Error: Book is already borrowed.");
+                return;
+            }
+
+            book.IsBorrowed = true;
+            Console.WriteLine($"Book '{book.Title}' borrowed successfully by {user.Name}.");
+        }
+    }
+
+    // Repository class for storing books and users
+    public class LibraryRepository
+    {
+        private readonly List<Book> _books;
+        private readonly List<User> _users;
+
+        public LibraryRepository()
+        {
+            _books = new List<Book>();
+            _users = new List<User>();
+        }
+
+        public void AddBook(Book book)
+        {
+            _books.Add(book);
+        }
+
+        public void AddUser(User user)
+        {
+            _users.Add(user);
+        }
+
+        public Book GetBookByISBN(string isbn)
+        {
+            return _books.Find(b => b.ISBN == isbn);
+        }
+
+        public User GetUserByEmail(string email)
+        {
+            return _users.Find(u => u.Email == email);
+        }
+    }
+
+    // Main entry point
     class Program
     {
         static void Main(string[] args)
         {
-            Bank bank = new Bank();
-            bool exit = false;
+            var libraryService = new LibraryService();
 
-            while (!exit)
-            {
-                Console.WriteLine("\n--- Bank Management System ---");
-                Console.WriteLine("1. Create Account");
-                Console.WriteLine("2. Deposit");
-                Console.WriteLine("3. Withdraw");
-                Console.WriteLine("4. Display Account Details");
-                Console.WriteLine("5. Exit");
-                Console.Write("Choose an option: ");
-                string choice = Console.ReadLine();
+            // Register Users
+            libraryService.RegisterUser("Alice", "alice@example.com");
+            libraryService.RegisterUser("Bob", "bob@example.com");
 
-                switch (choice)
-                {
-                    case "1":
-                        Console.Write("Enter account holder's name: ");
-                        string name = Console.ReadLine();
-                        Console.Write("Enter initial deposit amount: ");
-                        decimal initialDeposit = decimal.Parse(Console.ReadLine());
-                        bank.CreateAccount(name, initialDeposit);
-                        break;
+            // Add Books
+            libraryService.AddBook("The Catcher in the Rye", "J.D. Salinger", 1951, "1234567890123");
+            libraryService.AddBook("To Kill a Mockingbird", "Harper Lee", 1960, "1234567890124");
 
-                    case "2":
-                        Console.Write("Enter account number: ");
-                        int depositAccountNumber = int.Parse(Console.ReadLine());
-                        Console.Write("Enter deposit amount: ");
-                        decimal depositAmount = decimal.Parse(Console.ReadLine());
-                        bank.DepositToAccount(depositAccountNumber, depositAmount);
-                        break;
-
-                    case "3":
-                        Console.Write("Enter account number: ");
-                        int withdrawAccountNumber = int.Parse(Console.ReadLine());
-                        Console.Write("Enter withdrawal amount: ");
-                        decimal withdrawAmount = decimal.Parse(Console.ReadLine());
-                        bank.WithdrawFromAccount(withdrawAccountNumber, withdrawAmount);
-                        break;
-
-                    case "4":
-                        Console.Write("Enter account number: ");
-                        int displayAccountNumber = int.Parse(Console.ReadLine());
-                        bank.DisplayAccountDetails(displayAccountNumber);
-                        break;
-
-                    case "5":
-                        exit = true;
-                        Console.WriteLine("Exiting...");
-                        break;
-
-                    default:
-                        Console.WriteLine("Invalid option. Please try again.");
-                        break;
-                }
-            }
+            // Borrow Books
+            libraryService.BorrowBook("alice@example.com", "1234567890123");
+            libraryService.BorrowBook("bob@example.com", "1234567890123"); // Should throw an error, book already borrowed
         }
     }
 }
