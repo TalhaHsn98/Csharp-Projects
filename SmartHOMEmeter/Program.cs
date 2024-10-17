@@ -94,9 +94,38 @@ namespace SmartHomeSimulator
         }
     }
 
+    // Class for scheduled tasks
+    class ScheduleTask
+    {
+        public SmartDevice Device { get; set; }
+        public bool TurnOn { get; set; }
+        public DateTime ScheduledTime { get; set; }
+
+        public ScheduleTask(SmartDevice device, bool turnOn, DateTime time)
+        {
+            Device = device;
+            TurnOn = turnOn;
+            ScheduledTime = time;
+        }
+
+        public void Execute()
+        {
+            if (TurnOn)
+            {
+                Device.TurnOn();
+            }
+            else
+            {
+                Device.TurnOff();
+            }
+        }
+    }
+
     class Program
     {
         static List<SmartDevice> devices = new List<SmartDevice>();
+        static List<ScheduleTask> scheduleTasks = new List<ScheduleTask>();
+        static Timer scheduleTimer;
 
         static void Main(string[] args)
         {
@@ -105,11 +134,16 @@ namespace SmartHomeSimulator
             devices.Add(new SmartThermostat("Main Thermostat", 22.5));
             devices.Add(new SmartDoorLock("Front Door"));
 
+            // Set up a timer to check for scheduled tasks every second
+            scheduleTimer = new Timer(1000);  // 1000 ms = 1 second
+            scheduleTimer.Elapsed += CheckSchedule;
+            scheduleTimer.Start();
+
             // Main loop to accept user commands
             string command = string.Empty;
             while (command != "exit")
             {
-                Console.WriteLine("\nEnter a command (e.g., 'turn on light', 'set temp', 'lock door', 'show status', 'exit'):");
+                Console.WriteLine("\nEnter a command (e.g., 'turn on light', 'set temp', 'lock door', 'schedule', 'show status', 'exit'):");
                 command = Console.ReadLine().ToLower();
                 ProcessCommand(command);
             }
@@ -131,6 +165,9 @@ namespace SmartHomeSimulator
                 case "lock":
                 case "unlock":
                     HandleLockCommand(parts);
+                    break;
+                case "schedule":
+                    HandleScheduleCommand(parts);
                     break;
                 case "show":
                     ShowDeviceStatus();
@@ -212,11 +249,51 @@ namespace SmartHomeSimulator
             }
         }
 
+        static void HandleScheduleCommand(string[] parts)
+        {
+            if (parts.Length < 5) return;
+
+            string action = parts[1]; // "on" or "off"
+            string deviceName = parts[2];
+            int hour = int.Parse(parts[3]);
+            int minute = int.Parse(parts[4]);
+
+            SmartDevice device = devices.Find(d => d.DeviceName.ToLower().Contains(deviceName));
+            if (device != null)
+            {
+                DateTime scheduledTime = DateTime.Now.Date.AddHours(hour).AddMinutes(minute);
+                bool turnOn = action == "on";
+
+                ScheduleTask task = new ScheduleTask(device, turnOn, scheduledTime);
+                scheduleTasks.Add(task);
+
+                Console.WriteLine($"Scheduled {deviceName} to turn {(turnOn ? "on" : "off")} at {scheduledTime.ToShortTimeString()}.");
+            }
+            else
+            {
+                Console.WriteLine("Device not found.");
+            }
+        }
+
         static void ShowDeviceStatus()
         {
             foreach (var device in devices)
             {
                 device.ShowStatus();
+            }
+        }
+
+        // Timer event to check the schedule and execute tasks
+        static void CheckSchedule(object sender, ElapsedEventArgs e)
+        {
+            DateTime now = DateTime.Now;
+
+            // Find tasks that are scheduled to run now
+            var dueTasks = scheduleTasks.FindAll(task => task.ScheduledTime <= now);
+            foreach (var task in dueTasks)
+            {
+                task.Execute();
+                scheduleTasks.Remove(task); // Remove the task after execution
             }
         }
     }
