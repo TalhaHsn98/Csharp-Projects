@@ -19,6 +19,11 @@ namespace PersonalFinanceTracker
             Description = description;
             Category = category;
         }
+
+        public override string ToString()
+        {
+            return $"[{Date}] {Category}: {Description} - Amount: {Amount}";
+        }
     }
 
     // Represents a budget category (e.g., Rent, Groceries)
@@ -38,42 +43,35 @@ namespace PersonalFinanceTracker
 
     class FinanceTracker
     {
-        // List to store all transactions
-        private List<Transaction> transactions = new List<Transaction>();
+        private List<Transaction> transactions = new List<Transaction>();  // Stores all transactions
+        private Dictionary<string, Category> categories = new Dictionary<string, Category>(); // Stores categories and their spending info
 
-        // Dictionary to keep track of each category's budget and spending
-        private Dictionary<string, Category> categories = new Dictionary<string, Category>();
-
-        // These track the total income and total expenses separately
         private double totalIncome = 0;
         private double totalExpenses = 0;
 
         // Add a new transaction (income or expense)
         public void AddTransaction(double amount, string description, string category)
         {
-            DateTime date = DateTime.Now;  // The current date/time is assigned when the transaction is logged
+            DateTime date = DateTime.Now;  // Timestamp the transaction
 
-            // Ensure the category exists before adding a transaction to it
             if (!categories.ContainsKey(category))
             {
                 Console.WriteLine("Category does not exist. Add the category first.");
                 return;
             }
 
-            // Add the transaction to the list
-            transactions.Add(new Transaction(amount, date, description, category));
+            transactions.Add(new Transaction(amount, date, description, category));  // Add the transaction
 
-            // Check if it's income (positive amount) or expense (negative)
-            if (amount > 0)
+            if (amount > 0) // If it's income
             {
                 totalIncome += amount;
             }
-            else
+            else // If it's expense
             {
                 totalExpenses += amount;
-                categories[category].Spent += Math.Abs(amount); // Add the expense to the category's spending
+                categories[category].Spent += Math.Abs(amount);
 
-                // Warn if the spending in a category exceeds the budget
+                // Warn if the spending exceeds the category's budget
                 if (categories[category].Spent > categories[category].BudgetLimit)
                 {
                     Console.WriteLine($"Warning: You've exceeded the budget for {category}!");
@@ -83,30 +81,63 @@ namespace PersonalFinanceTracker
             Console.WriteLine($"Transaction added: {description}, Amount: {amount}, Category: {category}");
         }
 
-        // Create a new category and assign a budget limit to it
+        // Create a new category and assign a budget limit
         public void AddCategory(string name, double budgetLimit)
         {
-            // Check if the category already exists
             if (categories.ContainsKey(name))
             {
                 Console.WriteLine("Category already exists.");
                 return;
             }
 
-            // If not, create it and add it to the dictionary
             categories.Add(name, new Category(name, budgetLimit));
             Console.WriteLine($"Category '{name}' added with a budget of {budgetLimit}");
         }
 
-        // Display the current balance, income, and expenses
+        // Display the current balance
         public void ShowBalance()
         {
-            double balance = totalIncome + totalExpenses;  // Net balance is income minus expenses
+            double balance = totalIncome + totalExpenses;
             Console.WriteLine($"Total Balance: ${balance}");
             Console.WriteLine($"Total Income: ${totalIncome}, Total Expenses: ${Math.Abs(totalExpenses)}");
         }
 
-        // Generate a monthly report, showing income, expenses, savings, and category breakdowns
+        // Show all transactions with their indices
+        public void ShowTransactions()
+        {
+            Console.WriteLine("\n--- Transaction List ---");
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                Console.WriteLine($"{i}. {transactions[i]}");
+            }
+        }
+
+        // Delete a transaction by its index
+        public void DeleteTransaction(int index)
+        {
+            if (index < 0 || index >= transactions.Count)
+            {
+                Console.WriteLine("Invalid index. No transaction was deleted.");
+                return;
+            }
+
+            Transaction transactionToDelete = transactions[index];
+            transactions.RemoveAt(index);  // Remove the transaction
+
+            if (transactionToDelete.Amount > 0) // If it's income, reduce total income
+            {
+                totalIncome -= transactionToDelete.Amount;
+            }
+            else // If it's an expense, reduce total expenses and adjust the category's spent amount
+            {
+                totalExpenses -= transactionToDelete.Amount;
+                categories[transactionToDelete.Category].Spent -= Math.Abs(transactionToDelete.Amount);
+            }
+
+            Console.WriteLine($"Transaction '{transactionToDelete.Description}' was deleted.");
+        }
+
+        // Generate a report showing all income and expenses
         public void ShowReport()
         {
             Console.WriteLine("\n--- Monthly Report ---");
@@ -114,11 +145,10 @@ namespace PersonalFinanceTracker
             Console.WriteLine($"Total Income: ${totalIncome}");
             Console.WriteLine($"Total Expenses: ${Math.Abs(totalExpenses)}");
 
-            double savings = totalIncome + totalExpenses;  // Remaining amount is treated as savings
+            double savings = totalIncome + totalExpenses;
             Console.WriteLine($"Savings: ${savings}");
 
             Console.WriteLine("\n--- Category Breakdown ---");
-            // Iterate through the categories and show how much was spent in each
             foreach (var category in categories)
             {
                 Console.WriteLine($"{category.Key}: Spent ${category.Value.Spent} / Budget ${category.Value.BudgetLimit}");
@@ -128,30 +158,26 @@ namespace PersonalFinanceTracker
 
     class Program
     {
-        // Instantiate the finance tracker, which holds all financial data and operations
-        static FinanceTracker tracker = new FinanceTracker();
+        static FinanceTracker tracker = new FinanceTracker();  // Finance tracker to store all transactions
 
         static void Main(string[] args)
         {
-            // Adding some default categories for convenience
             tracker.AddCategory("Rent", 1000);
             tracker.AddCategory("Groceries", 300);
             tracker.AddCategory("Entertainment", 200);
 
             string command = string.Empty;
-            // Keep asking for user input until they type 'exit'
             while (command != "exit")
             {
-                Console.WriteLine("\nEnter a command (e.g., 'add income', 'add expense', 'add category', 'show balance', 'show report', 'exit'):");
-                command = Console.ReadLine().ToLower();  // Convert input to lowercase for uniform processing
+                Console.WriteLine("\nEnter a command (e.g., 'add income', 'add expense', 'add category', 'show balance', 'show transactions', 'delete transaction', 'show report', 'exit'):");
+                command = Console.ReadLine().ToLower();
                 ProcessCommand(command);
             }
         }
 
-        // Process the user's command and call the appropriate function
         static void ProcessCommand(string command)
         {
-            string[] parts = command.Split(' ');  // Split command input into parts (e.g., 'add income')
+            string[] parts = command.Split(' ');
 
             if (parts.Length == 0) return;
 
@@ -163,13 +189,15 @@ namespace PersonalFinanceTracker
                 case "show":
                     HandleShowCommand(parts);
                     break;
+                case "delete":
+                    HandleDeleteCommand(parts);
+                    break;
                 default:
                     Console.WriteLine("Unknown command.");
                     break;
             }
         }
 
-        // Handle 'add' commands (e.g., 'add income', 'add category')
         static void HandleAddCommand(string[] parts)
         {
             if (parts.Length < 2) return;
@@ -183,7 +211,7 @@ namespace PersonalFinanceTracker
 
                 if (type == "expense")
                 {
-                    amount = -amount;  // Negative amount for expenses
+                    amount = -amount;
                 }
 
                 Console.Write("Enter description: ");
@@ -192,7 +220,7 @@ namespace PersonalFinanceTracker
                 Console.Write("Enter category: ");
                 string category = Console.ReadLine();
 
-                tracker.AddTransaction(amount, description, category);  // Add the transaction
+                tracker.AddTransaction(amount, description, category);
             }
             else if (type == "category")
             {
@@ -202,11 +230,10 @@ namespace PersonalFinanceTracker
                 Console.Write("Enter budget limit: ");
                 double limit = Convert.ToDouble(Console.ReadLine());
 
-                tracker.AddCategory(category, limit);  // Add the new category
+                tracker.AddCategory(category, limit);
             }
         }
 
-        // Handle 'show' commands (e.g., 'show balance', 'show report')
         static void HandleShowCommand(string[] parts)
         {
             if (parts.Length < 2) return;
@@ -215,12 +242,15 @@ namespace PersonalFinanceTracker
 
             if (type == "balance")
             {
-                tracker.ShowBalance();  // Show balance information
+                tracker.ShowBalance();
             }
             else if (type == "report")
             {
-                tracker.ShowReport();  // Show the financial report
+                tracker.ShowReport();
+            }
+            else if (type == "transactions")
+            {
+                tracker.ShowTransactions();
             }
         }
-    }
-}
+
