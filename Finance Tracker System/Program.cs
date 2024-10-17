@@ -254,3 +254,16 @@ namespace PersonalFinanceTracker
             }
         }
 
+        // This method handles deleting a transaction based on user input
+        static void HandleDeleteCommand(string[] parts)
+        {
+            if (parts.Length < 3 || !int.TryParse(parts[2], out int index))
+            {
+                Console.WriteLine("Invalid delete command format. Use: delete transaction <index>");
+                return;
+            }
+
+            tracker.DeleteTransaction(index);
+        }
+    }
+}
