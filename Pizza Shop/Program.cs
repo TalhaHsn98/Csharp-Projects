@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PizzaShop
 {
-    // Enum for Pizza Sizes
+    // Enum for Pizza Sizes - This lets me easily manage different pizza sizes
     enum PizzaSize
     {
         Small,
@@ -11,7 +11,7 @@ namespace PizzaShop
         Large
     }
 
-    // Enum for Pizza Toppings
+    // Enum for Pizza Toppings - I use this to list all possible toppings a customer can choose
     enum PizzaToppings
     {
         Cheese,
@@ -25,20 +25,22 @@ namespace PizzaShop
         Pineapple
     }
 
-    // Pizza class to manage pizza properties
+    // Pizza class handles individual pizza details
     class Pizza
     {
-        public PizzaSize Size { get; set; }
-        public List<PizzaToppings> Toppings { get; set; }
-        public double BasePrice { get; set; }
+        public PizzaSize Size { get; set; } // Storing the pizza size here
+        public List<PizzaToppings> Toppings { get; set; } // List to hold all the chosen toppings
+        public double BasePrice { get; set; } // The base price changes based on pizza size
 
+        // This constructor initializes the pizza with a size and sets the base price
         public Pizza(PizzaSize size)
         {
             Size = size;
-            Toppings = new List<PizzaToppings>();
-            BasePrice = CalculateBasePrice();
+            Toppings = new List<PizzaToppings>(); // We start with no toppings
+            BasePrice = CalculateBasePrice(); // Calculate the base price for the pizza
         }
 
+        // This method calculates the base price based on the size of the pizza
         private double CalculateBasePrice()
         {
             switch (Size)
@@ -50,17 +52,20 @@ namespace PizzaShop
             }
         }
 
+        // This method adds up the total cost of the pizza including the toppings
         public double CalculateTotalCost()
         {
-            double toppingCost = 0.50 * Toppings.Count;
+            double toppingCost = 0.50 * Toppings.Count; // Each topping costs $0.50
             return BasePrice + toppingCost;
         }
 
+        // Method to add toppings to the pizza - just adds them to the list
         public void AddTopping(PizzaToppings topping)
         {
             Toppings.Add(topping);
         }
 
+        // This method displays the pizza details: size, toppings, and total cost
         public void DisplayPizza()
         {
             Console.WriteLine($"Pizza Size: {Size}");
@@ -71,25 +76,34 @@ namespace PizzaShop
             }
             Console.WriteLine($"Total Cost: ${CalculateTotalCost():0.00}");
         }
+
+        // New method to clear the toppings from the pizza - in case the customer changes their mind
+        public void ClearToppings()
+        {
+            Toppings.Clear();
+            Console.WriteLine("All toppings have been removed.");
+        }
     }
 
-    // Order class to manage multiple pizzas
+    // Order class to handle the entire order with multiple pizzas
     class Order
     {
-        public List<Pizza> Pizzas { get; private set; }
-        public double TotalCost { get; private set; }
+        public List<Pizza> Pizzas { get; private set; } // List to hold all pizzas in the order
+        public double TotalCost { get; private set; } // Track the total cost of the order
 
         public Order()
         {
             Pizzas = new List<Pizza>();
         }
 
+        // Method to add a pizza to the order - I wrote this to update the total cost as well
         public void AddPizza(Pizza pizza)
         {
             Pizzas.Add(pizza);
             TotalCost += pizza.CalculateTotalCost();
         }
 
+        // This method displays the entire order, showing details for each pizza
         public void DisplayOrder()
         {
             Console.WriteLine("\nYour Pizza Order:");
@@ -100,11 +114,36 @@ namespace PizzaShop
             }
             Console.WriteLine($"Total Order Cost: ${TotalCost:0.00}");
         }
+
+        // New method to remove the last pizza added - helps in case someone changes their mind
+        public void RemoveLastPizza()
+        {
+            if (Pizzas.Count > 0)
+            {
+                var lastPizza = Pizzas[Pizzas.Count - 1];
+                TotalCost -= lastPizza.CalculateTotalCost();
+                Pizzas.RemoveAt(Pizzas.Count - 1);
+                Console.WriteLine("Last pizza removed from your order.");
+            }
+            else
+            {
+                Console.WriteLine("No pizzas to remove.");
+            }
+        }
+
+        // Method to clear the entire order, resetting everything - useful for starting fresh
+        public void ClearOrder()
+        {
+            Pizzas.Clear();
+            TotalCost = 0;
+            Console.WriteLine("Your order has been cleared.");
+        }
     }
 
-    // Menu for user interaction
+    // Menu class to handle all user interactions
     static class Menu
     {
+        // I wrote this method to allow the user to select the pizza size from a list
         public static PizzaSize ChoosePizzaSize()
         {
             Console.WriteLine("\nChoose pizza size:");
@@ -121,6 +160,7 @@ namespace PizzaShop
             }
         }
 
+        // This method allows users to select toppings for their pizza
         public static void ChooseToppings(Pizza pizza)
         {
             Console.WriteLine("\nChoose your toppings (Type the number and press Enter after each, type '0' to finish):");
@@ -154,13 +194,17 @@ namespace PizzaShop
             }
         }
 
+        // Show main menu - I wrote this to display the user's options
         public static void ShowMainMenu()
         {
             Console.WriteLine("\nWelcome to Pizza Shop!");
             Console.WriteLine("1. Order Pizza");
-            Console.WriteLine("2. Exit");
+            Console.WriteLine("2. Remove Last Pizza");
+            Console.WriteLine("3. Clear Entire Order");
+            Console.WriteLine("4. Finalize and Exit");
         }
 
+        // This method finalizes the order and displays it - it's the final step before the user exits
         public static void FinalizeOrder(Order order)
         {
             Console.WriteLine("\nThank you for your order!");
@@ -170,31 +214,37 @@ namespace PizzaShop
         }
     }
 
-    // Main class to drive the application
+    // Main class to handle the application logic - I used a loop here to keep the program running until the user finalizes their order
     class Program
     {
         static void Main(string[] args)
         {
             bool isRunning = true;
-            Order currentOrder = new Order();
+            Order currentOrder = new Order(); // This is where the order gets stored
 
             while (isRunning)
             {
-                Menu.ShowMainMenu();
+                Menu.ShowMainMenu(); // Show the user their options
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        PizzaSize size = Menu.ChoosePizzaSize();
-                        Pizza pizza = new Pizza(size);
-                        Menu.ChooseToppings(pizza);
-                        currentOrder.AddPizza(pizza);
+                        PizzaSize size = Menu.ChoosePizzaSize(); // User selects a size
+                        Pizza pizza = new Pizza(size); // A new pizza is created based on the size
+                        Menu.ChooseToppings(pizza); // User chooses toppings for their pizza
+                        currentOrder.AddPizza(pizza); // Add pizza to the order
                         break;
                     case "2":
-                        Menu.FinalizeOrder(currentOrder);
-                        isRunning = false;
+                        currentOrder.RemoveLastPizza(); // Remove the last pizza added
+                        break;
+                    case "3":
+                        currentOrder.ClearOrder(); // Clears the entire order
+                        break;
+                    case "4":
+                        Menu.FinalizeOrder(currentOrder); // Finalize the order and exit
+                        isRunning = false; // Ends the loop
                         break;
                     default:
-                        Console.WriteLine("Invalid option, please try again.");
+                        Console.WriteLine("Invalid option, please try again."); // Error handling for invalid input
                         break;
                 }
             }
