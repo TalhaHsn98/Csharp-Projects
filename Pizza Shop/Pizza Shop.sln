@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pizza Shop", "Pizza Shop.csproj", "{A842E8D0-A48C-4806-98EC-D39DFFFF7B5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact Management System", "..\Contact Management System\Contact Management System.csproj", "{61783F62-8842-4BFD-A4B4-B2597AF16CEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A842E8D0-A48C-4806-98EC-D39DFFFF7B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A842E8D0-A48C-4806-98EC-D39DFFFF7B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A842E8D0-A48C-4806-98EC-D39DFFFF7B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

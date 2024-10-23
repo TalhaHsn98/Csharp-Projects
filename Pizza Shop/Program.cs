@@ -41,6 +41,7 @@ namespace PizzaShop
         }
 
         // This method calculates the base price based on the size of the pizza
+
         private double CalculateBasePrice()
         {
             switch (Size)
@@ -56,8 +57,13 @@ namespace PizzaShop
         public double CalculateTotalCost()
         {
             double toppingCost = 0.50 * Toppings.Count; // Each topping costs $0.50
-            return BasePrice + toppingCost;
+            double totalCost = BasePrice + toppingCost;
+
+            Console.WriteLine($"Your cost for the pizza: ${totalCost}");
+            return totalCost;
         }
+
+
 
         // Method to add toppings to the pizza - just adds them to the list
         public void AddTopping(PizzaToppings topping)
