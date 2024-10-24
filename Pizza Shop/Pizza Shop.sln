@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pizza Shop", "Pizza Shop.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact Management System", "..\Contact Management System\Contact Management System.csproj", "{61783F62-8842-4BFD-A4B4-B2597AF16CEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Student Grade Management System", "..\Student Grade Management System\Student Grade Management System.csproj", "{B2C5F11C-ABB2-49A0-8AF4-7CBE1F77E47B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61783F62-8842-4BFD-A4B4-B2597AF16CEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C5F11C-ABB2-49A0-8AF4-7CBE1F77E47B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C5F11C-ABB2-49A0-8AF4-7CBE1F77E47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C5F11C-ABB2-49A0-8AF4-7CBE1F77E47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C5F11C-ABB2-49A0-8AF4-7CBE1F77E47B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
