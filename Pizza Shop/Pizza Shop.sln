@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Student Grade Management Sy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task Manager using .Net", "..\Task Manager using .Net\Task Manager using .Net.csproj", "{E00ACAC1-4677-47AA-9DDC-8A8C266F924E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Job Application Tracker", "..\Job Application Tracker\Job Application Tracker.csproj", "{EB3B6767-EA05-41EE-8B77-2290892EDDF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Job Application Tracker Web App", "..\Job Application Tracker Web App\Job Application Tracker Web App.csproj", "{2D9D855E-8539-48B6-B9C6-615000166345}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{E00ACAC1-4677-47AA-9DDC-8A8C266F924E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E00ACAC1-4677-47AA-9DDC-8A8C266F924E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E00ACAC1-4677-47AA-9DDC-8A8C266F924E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB3B6767-EA05-41EE-8B77-2290892EDDF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB3B6767-EA05-41EE-8B77-2290892EDDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB3B6767-EA05-41EE-8B77-2290892EDDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB3B6767-EA05-41EE-8B77-2290892EDDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D9D855E-8539-48B6-B9C6-615000166345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D9D855E-8539-48B6-B9C6-615000166345}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D9D855E-8539-48B6-B9C6-615000166345}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D9D855E-8539-48B6-B9C6-615000166345}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
