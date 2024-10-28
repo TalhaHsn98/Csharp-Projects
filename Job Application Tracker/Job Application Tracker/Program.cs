@@ -13,6 +13,7 @@ namespace JobApplicationTrackerConsole
         Rejected
     }
 
+
     // Job application model class
     class JobApplication
     {
@@ -29,6 +30,7 @@ namespace JobApplicationTrackerConsole
     {
         static List<JobApplication> jobApplications = new List<JobApplication>();
         static int nextId = 1;
+        static int newthing = 19;
 
         static void Main(string[] args)
         {
