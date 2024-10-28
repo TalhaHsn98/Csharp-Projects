@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Job Application Tracker", "Job Application Tracker\Job Application Tracker.csproj", "{28FF0720-A4A5-4DD0-B242-1896E86296A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inverntory Management System", "Inverntory Management System\Inverntory Management System.csproj", "{67B15C4A-61C4-429D-9872-3A8367BCAF2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{28FF0720-A4A5-4DD0-B242-1896E86296A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FF0720-A4A5-4DD0-B242-1896E86296A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FF0720-A4A5-4DD0-B242-1896E86296A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B15C4A-61C4-429D-9872-3A8367BCAF2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B15C4A-61C4-429D-9872-3A8367BCAF2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B15C4A-61C4-429D-9872-3A8367BCAF2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B15C4A-61C4-429D-9872-3A8367BCAF2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
